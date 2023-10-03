@@ -1,3 +1,5 @@
+set -ex
+
 cd /home/olytvyn/go/terraform-provider-firehydrant/
 make install
 cd /home/olytvyn/go/terraform-provider-firehydrant/examples

@@ -5,6 +5,7 @@ go 1.21.0
 require (
 	github.com/dghubble/sling v1.4.1
 	github.com/hashicorp/terraform-plugin-sdk/v2 v2.29.0
+	github.com/pkg/errors v0.9.1
 )
 
 require (
