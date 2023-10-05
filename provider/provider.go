@@ -72,7 +72,7 @@ func setupFireHydrantContext(ctx context.Context, rd *schema.ResourceData) (inte
 		return nil, diag.FromErr(errors.Wrap(err, "cound not initialize API client"))
 	}
 
-	_, err = ac.Ping()
+	_, err = ac.Ping(ctx)
 	if err != nil {
 		return nil, diag.FromErr(err)
 	}
@@ -110,7 +110,7 @@ func dataFireHydrantService(ctx context.Context, d *schema.ResourceData, m inter
 	ac := m.(firehydrant.Client)
 	serviceID := d.Get("id").(string)
 
-	r, err := ac.GetService(serviceID)
+	r, err := ac.GetService(ctx, serviceID)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -167,7 +167,7 @@ func createResourceFireHydrantService(ctx context.Context, d *schema.ResourceDat
 		Description: serviceDescription,
 	}
 
-	newService, err := ac.CreateService(r)
+	newService, err := ac.CreateService(ctx, r)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -192,7 +192,7 @@ func updateResourceFireHydrantService(ctx context.Context, d *schema.ResourceDat
 		Description: serviceDescription,
 	}
 
-	_, err := ac.UpdateService(serviceID, r)
+	_, err := ac.UpdateService(ctx, serviceID, r)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -204,7 +204,7 @@ func readResourceFireHydrantService(ctx context.Context, d *schema.ResourceData,
 	ac := m.(firehydrant.Client)
 	serviceID := d.Id()
 
-	r, err := ac.GetService(serviceID)
+	r, err := ac.GetService(ctx, serviceID)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -232,7 +232,7 @@ func deleteResourceFireHydrantService(ctx context.Context, d *schema.ResourceDat
 	ac := m.(firehydrant.Client)
 	serviceID := d.Id()
 
-	err := ac.DeleteService(serviceID)
+	err := ac.DeleteService(ctx, serviceID)
 	if err != nil {
 		return diag.FromErr(err)
 	}

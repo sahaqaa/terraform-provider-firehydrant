@@ -1,6 +1,7 @@
 package firehydrant
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/dghubble/sling"
@@ -37,11 +38,11 @@ const (
 
 // Client is the client that makes requests to FireHydrant
 type Client interface {
-	Ping() (*PingResponse, error)
-	GetService(id string) (*ServiceResponce, error)
-	CreateService(req CreateServiceRequest) (*ServiceResponce, error)
-	UpdateService(serviceID string, req UpdateServiceRequest) (*ServiceResponce, error)
-	DeleteService(serviceID string) error
+	Ping(ctx context.Context) (*PingResponse, error)
+	GetService(ctx context.Context, id string) (*ServiceResponce, error)
+	CreateService(ctx context.Context, req CreateServiceRequest) (*ServiceResponce, error)
+	UpdateService(ctx context.Context, serviceID string, req UpdateServiceRequest) (*ServiceResponce, error)
+	DeleteService(ctx context.Context, serviceID string) error
 }
 
 // OptFunc is a function that sets a setting on a client
@@ -77,7 +78,7 @@ func NewRestClient(token string, opts ...OptFunc) (*APIClient, error) {
 
 // Ping hits and verifies the HTTP of FireHydrant
 // TODO: Check failure case
-func (c *APIClient) Ping() (*PingResponse, error) {
+func (c *APIClient) Ping(ctx context.Context) (*PingResponse, error) {
 	res := &PingResponse{}
 
 	if _, err := c.client.Get("ping").Receive(res, nil); err != nil {
@@ -89,7 +90,7 @@ func (c *APIClient) Ping() (*PingResponse, error) {
 
 // GetService retrieves a service from the FireHydrant API
 // TODO: Check failure case
-func (c *APIClient) GetService(id string) (*ServiceResponce, error) {
+func (c *APIClient) GetService(ctx context.Context, id string) (*ServiceResponce, error) {
 	res := &ServiceResponce{}
 
 	if _, err := c.client.Get("services/"+id).Receive(res, nil); err != nil {
@@ -101,7 +102,7 @@ func (c *APIClient) GetService(id string) (*ServiceResponce, error) {
 
 // CreateService creates a brand spanking new service in FireHydrant
 // TODO: Check failure case
-func (c *APIClient) CreateService(createReq CreateServiceRequest) (*ServiceResponce, error) {
+func (c *APIClient) CreateService(ctx context.Context, createReq CreateServiceRequest) (*ServiceResponce, error) {
 	res := &ServiceResponce{}
 
 	if _, err := c.client.Post("services").BodyJSON(&createReq).Receive(res, nil); err != nil {
@@ -113,7 +114,7 @@ func (c *APIClient) CreateService(createReq CreateServiceRequest) (*ServiceRespo
 
 // UpdateService updates a old spanking service in FireHydrant
 // TODO: Check failure case
-func (c *APIClient) UpdateService(serviceID string, updateReq UpdateServiceRequest) (*ServiceResponce, error) {
+func (c *APIClient) UpdateService(ctx context.Context, serviceID string, updateReq UpdateServiceRequest) (*ServiceResponce, error) {
 	res := &ServiceResponce{}
 
 	if _, err := c.client.Patch("services/"+serviceID).BodyJSON(&updateReq).Receive(res, nil); err != nil {
@@ -125,7 +126,7 @@ func (c *APIClient) UpdateService(serviceID string, updateReq UpdateServiceReque
 
 // DeleteService deletes a service in FireHydrant
 // TODO: Check failure case
-func (c *APIClient) DeleteService(serviceID string) error {
+func (c *APIClient) DeleteService(ctx context.Context, serviceID string) error {
 	if _, err := c.client.Delete("services/"+serviceID).Receive(nil, nil); err != nil {
 		return errors.Wrap(err, "could not delete service")
 	}
